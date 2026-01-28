@@ -41,27 +41,14 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Protected routes
+  // Auth pages
   const isAuthPage = request.nextUrl.pathname.startsWith('/login') ||
                      request.nextUrl.pathname.startsWith('/register') ||
                      request.nextUrl.pathname.startsWith('/forgot-password') ||
                      request.nextUrl.pathname.startsWith('/reset-password')
 
-  const isProtectedRoute = request.nextUrl.pathname.startsWith('/mail') ||
-                           request.nextUrl.pathname.startsWith('/attendance') ||
-                           request.nextUrl.pathname.startsWith('/calendar') ||
-                           request.nextUrl.pathname.startsWith('/settings') ||
-                           request.nextUrl.pathname === '/'
-
-  // Redirect unauthenticated users to login
-  if (!user && isProtectedRoute && request.nextUrl.pathname !== '/') {
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    url.searchParams.set('redirectTo', request.nextUrl.pathname)
-    return NextResponse.redirect(url)
-  }
-
-  // Redirect authenticated users away from auth pages
+  // Only redirect authenticated Supabase users away from auth pages
+  // Protected route auth check is handled client-side to support demo mode
   if (user && isAuthPage) {
     const url = request.nextUrl.clone()
     url.pathname = '/mail'
