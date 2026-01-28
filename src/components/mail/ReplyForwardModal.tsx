@@ -7,6 +7,7 @@ import { z } from 'zod'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -50,34 +51,6 @@ export function ReplyForwardModal({
   const title = isReply ? '답장' : '전달'
   const Icon = isReply ? Reply : Forward
 
-  // 제목 생성
-  const generateSubject = () => {
-    if (!originalMessage?.subject) return ''
-    const prefix = isReply ? 'Re: ' : 'Fwd: '
-    // 이미 prefix가 있으면 그대로 사용
-    if (originalMessage.subject.startsWith(prefix)) {
-      return originalMessage.subject
-    }
-    return prefix + originalMessage.subject
-  }
-
-  // 인용 본문 생성
-  const generateQuotedBody = () => {
-    if (!originalMessage) return ''
-
-    const fromAddress = originalMessage.from_address || '알 수 없음'
-    const date = originalMessage.received_at
-      ? new Date(originalMessage.received_at).toLocaleString('ko-KR')
-      : ''
-    const body = originalMessage.body || ''
-
-    if (isReply) {
-      return `\n\n\n---\n${date}에 ${fromAddress}님이 작성:\n\n> ${body.split('\n').join('\n> ')}`
-    } else {
-      return `\n\n\n---------- 전달된 메시지 ----------\n보낸 사람: ${fromAddress}\n날짜: ${date}\n제목: ${originalMessage.subject || '(제목 없음)'}\n\n${body}`
-    }
-  }
-
   const {
     register,
     handleSubmit,
@@ -95,13 +68,35 @@ export function ReplyForwardModal({
   // 모달이 열릴 때 초기값 설정
   useEffect(() => {
     if (open && originalMessage) {
+      const isReplyMode = mode === 'reply'
+
+      // 제목 생성
+      let subject = ''
+      if (originalMessage.subject) {
+        const prefix = isReplyMode ? 'Re: ' : 'Fwd: '
+        subject = originalMessage.subject.startsWith(prefix)
+          ? originalMessage.subject
+          : prefix + originalMessage.subject
+      }
+
+      // 인용 본문 생성
+      const fromAddress = originalMessage.from_address || '알 수 없음'
+      const date = originalMessage.received_at
+        ? new Date(originalMessage.received_at).toLocaleString('ko-KR')
+        : ''
+      const body = originalMessage.body || ''
+
+      const quotedBody = isReplyMode
+        ? `\n\n\n---\n${date}에 ${fromAddress}님이 작성:\n\n> ${body.split('\n').join('\n> ')}`
+        : `\n\n\n---------- 전달된 메시지 ----------\n보낸 사람: ${fromAddress}\n날짜: ${date}\n제목: ${originalMessage.subject || '(제목 없음)'}\n\n${body}`
+
       reset({
-        to: isReply ? (originalMessage.from_address || '') : '',
-        subject: generateSubject(),
-        body: generateQuotedBody(),
+        to: isReplyMode ? (originalMessage.from_address || '') : '',
+        subject,
+        body: quotedBody,
       })
     }
-  }, [open, originalMessage, mode])
+  }, [open, originalMessage, mode, reset])
 
   const handleClose = () => {
     reset()
@@ -135,6 +130,9 @@ export function ReplyForwardModal({
             <Icon className="h-5 w-5" />
             {title}
           </DialogTitle>
+          <DialogDescription>
+            {isReply ? '원본 메시지에 답장합니다.' : '메시지를 다른 수신자에게 전달합니다.'}
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

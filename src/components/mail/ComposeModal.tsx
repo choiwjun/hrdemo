@@ -8,6 +8,7 @@ import { useMailStore } from '@/stores/mailStore'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -106,6 +107,7 @@ export function ComposeModal() {
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>새 메시지 작성</DialogTitle>
+          <DialogDescription>Gmail 또는 Slack으로 새 메시지를 작성합니다.</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
