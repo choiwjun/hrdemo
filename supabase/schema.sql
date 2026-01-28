@@ -256,25 +256,13 @@ CREATE INDEX idx_events_user_id ON events(user_id);
 CREATE INDEX idx_events_start_at ON events(start_at);
 CREATE INDEX idx_events_date_range ON events(start_at, end_at);
 
--- RLS 정책
+-- RLS 정책 (event_participants 참조 정책은 해당 테이블 생성 후 추가)
 ALTER TABLE events ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view own events"
 ON events FOR SELECT
 TO authenticated
 USING (auth.uid() = user_id AND deleted_at IS NULL);
-
-CREATE POLICY "Users can view events they participate in"
-ON events FOR SELECT
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM event_participants
-    WHERE event_participants.event_id = events.id
-    AND event_participants.user_id = auth.uid()
-  )
-  AND deleted_at IS NULL
-);
 
 CREATE POLICY "Users can insert own events"
 ON events FOR INSERT
@@ -347,6 +335,19 @@ USING (
     WHERE events.id = event_participants.event_id
     AND events.user_id = auth.uid()
   )
+);
+
+-- events 테이블의 참석자 조회 정책 (event_participants 테이블 생성 후 추가)
+CREATE POLICY "Users can view events they participate in"
+ON events FOR SELECT
+TO authenticated
+USING (
+  EXISTS (
+    SELECT 1 FROM event_participants
+    WHERE event_participants.event_id = events.id
+    AND event_participants.user_id = auth.uid()
+  )
+  AND deleted_at IS NULL
 );
 
 -- ==============================================
