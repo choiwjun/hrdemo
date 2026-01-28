@@ -16,6 +16,7 @@ import {
   X,
   Paperclip,
   Mail,
+  ArrowLeft,
 } from 'lucide-react'
 import {
   DropdownMenu,
@@ -28,6 +29,7 @@ import type { Message } from '@/types/database'
 interface MailDetailProps {
   message: Message | null
   onClose?: () => void
+  onBack?: () => void
   onReply?: () => void
   onForward?: () => void
   onDelete?: () => void
@@ -37,6 +39,7 @@ interface MailDetailProps {
 export function MailDetail({
   message,
   onClose,
+  onBack,
   onReply,
   onForward,
   onDelete,
@@ -71,6 +74,11 @@ export function MailDetail({
       {/* 헤더 */}
       <div className="flex items-center justify-between border-b px-4 py-3">
         <div className="flex items-center gap-2">
+          {onBack && (
+            <Button variant="ghost" size="icon" onClick={onBack} title="목록으로" className="lg:hidden">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          )}
           <Button variant="ghost" size="icon" onClick={onReply} title="답장">
             <Reply className="h-4 w-4" />
           </Button>

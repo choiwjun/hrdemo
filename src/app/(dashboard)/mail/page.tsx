@@ -143,7 +143,7 @@ export default function MailPage() {
     <>
       <div className="flex h-[calc(100vh-56px)]">
         {/* 메일 사이드바 (데스크톱에서만 표시) */}
-        <div className="hidden border-r lg:block">
+        <div className="hidden border-r xl:block">
           <MailSidebar
             labels={labels}
             onComposeClick={handleCompose}
@@ -153,19 +153,20 @@ export default function MailPage() {
           />
         </div>
 
-        {/* 메시지 목록 */}
-        <div className="flex-1 border-r">
+        {/* 메시지 목록 - 모바일에서 메시지 선택 시 숨김 */}
+        <div className={`flex-1 border-r ${activeMessage ? 'hidden lg:block' : ''}`}>
           <MailList messages={messages} onRefresh={handleRefresh} />
         </div>
 
-        {/* 메시지 상세 (데스크톱에서만 표시) */}
-        <div className="hidden w-1/2 lg:block">
+        {/* 메시지 상세 - 모바일에서 메시지 선택 시 전체 화면 */}
+        <div className={`${activeMessage ? 'flex-1' : 'hidden'} lg:block lg:w-1/2 lg:flex-none`}>
           <MailDetail
             message={activeMessage}
             onStarToggle={handleStarToggle}
             onDelete={handleDelete}
             onReply={handleReply}
             onForward={handleForward}
+            onBack={() => setActiveMessageId(null)}
           />
         </div>
       </div>
