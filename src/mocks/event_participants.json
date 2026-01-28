@@ -1,0 +1,116 @@
+{
+  "event_participants": [
+    {
+      "id": "ep-001",
+      "event_id": "event-001",
+      "user_id": "user-002",
+      "status": "accepted",
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "ep-002",
+      "event_id": "event-001",
+      "user_id": "user-003",
+      "status": "accepted",
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "ep-003",
+      "event_id": "event-001",
+      "user_id": "user-004",
+      "status": "accepted",
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "ep-004",
+      "event_id": "event-002",
+      "user_id": "user-002",
+      "status": "accepted",
+      "created_at": "2025-01-25T00:00:00Z",
+      "updated_at": "2025-01-25T00:00:00Z"
+    },
+    {
+      "id": "ep-005",
+      "event_id": "event-002",
+      "user_id": "user-003",
+      "status": "pending",
+      "created_at": "2025-01-25T00:00:00Z",
+      "updated_at": "2025-01-25T00:00:00Z"
+    },
+    {
+      "id": "ep-006",
+      "event_id": "event-003",
+      "user_id": "user-002",
+      "status": "accepted",
+      "created_at": "2025-01-20T00:00:00Z",
+      "updated_at": "2025-01-20T00:00:00Z"
+    },
+    {
+      "id": "ep-007",
+      "event_id": "event-003",
+      "user_id": "user-003",
+      "status": "accepted",
+      "created_at": "2025-01-20T00:00:00Z",
+      "updated_at": "2025-01-20T00:00:00Z"
+    },
+    {
+      "id": "ep-008",
+      "event_id": "event-003",
+      "user_id": "user-004",
+      "status": "declined",
+      "created_at": "2025-01-20T00:00:00Z",
+      "updated_at": "2025-01-21T00:00:00Z"
+    },
+    {
+      "id": "ep-009",
+      "event_id": "event-004",
+      "user_id": "user-002",
+      "status": "accepted",
+      "created_at": "2025-01-01T00:00:00Z",
+      "updated_at": "2025-01-01T00:00:00Z"
+    },
+    {
+      "id": "ep-010",
+      "event_id": "event-007",
+      "user_id": "user-002",
+      "status": "accepted",
+      "created_at": "2025-01-24T00:00:00Z",
+      "updated_at": "2025-01-24T00:00:00Z"
+    },
+    {
+      "id": "ep-011",
+      "event_id": "event-007",
+      "user_id": "user-003",
+      "status": "pending",
+      "created_at": "2025-01-24T00:00:00Z",
+      "updated_at": "2025-01-24T00:00:00Z"
+    },
+    {
+      "id": "ep-012",
+      "event_id": "event-007",
+      "user_id": "user-004",
+      "status": "accepted",
+      "created_at": "2025-01-24T00:00:00Z",
+      "updated_at": "2025-01-24T00:00:00Z"
+    },
+    {
+      "id": "ep-013",
+      "event_id": "event-007",
+      "user_id": "user-005",
+      "status": "accepted",
+      "created_at": "2025-01-24T00:00:00Z",
+      "updated_at": "2025-01-24T00:00:00Z"
+    },
+    {
+      "id": "ep-014",
+      "event_id": "event-008",
+      "user_id": "user-002",
+      "status": "accepted",
+      "created_at": "2025-01-27T00:00:00Z",
+      "updated_at": "2025-01-27T00:00:00Z"
+    }
+  ]
+}
