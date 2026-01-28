@@ -2,18 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import dynamic from 'next/dynamic'
+import { Header } from '@/components/layout/Header'
+import { Sidebar } from '@/components/layout/Sidebar'
 
-// 클라이언트에서만 렌더링되도록 dynamic import (SSR 비활성화)
-const Header = dynamic(
-  () => import('@/components/layout/Header').then((mod) => mod.Header),
-  { ssr: false }
-)
-
-const Sidebar = dynamic(
-  () => import('@/components/layout/Sidebar').then((mod) => mod.Sidebar),
-  { ssr: false }
-)
+type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated'
 
 export default function DashboardLayout({
   children,
@@ -22,23 +14,24 @@ export default function DashboardLayout({
 }) {
   const router = useRouter()
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [authStatus, setAuthStatus] = useState<AuthStatus>('loading')
 
   useEffect(() => {
-    setMounted(true)
-    // Check for demo user in localStorage
+    // 클라이언트에서 localStorage 체크
     const demoUser = localStorage.getItem('demo_user')
     if (demoUser) {
-      setIsAuthenticated(true)
+      setAuthStatus('authenticated')
     } else {
-      // No demo user - redirect to login
-      router.push('/login')
+      setAuthStatus('unauthenticated')
+      // 약간의 딜레이 후 리다이렉트 (상태 업데이트 보장)
+      setTimeout(() => {
+        router.replace('/login')
+      }, 100)
     }
   }, [router])
 
-  // 클라이언트 마운트 전에는 로딩 표시
-  if (!mounted) {
+  // 로딩 중
+  if (authStatus === 'loading') {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -47,10 +40,10 @@ export default function DashboardLayout({
   }
 
   // 인증되지 않은 경우 (리다이렉트 중)
-  if (!isAuthenticated) {
+  if (authStatus === 'unauthenticated') {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <p className="text-muted-foreground">로그인 페이지로 이동 중...</p>
       </div>
     )
   }

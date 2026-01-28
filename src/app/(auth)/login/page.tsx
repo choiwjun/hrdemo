@@ -45,10 +45,10 @@ function LoginForm() {
     localStorage.setItem('demo_user', JSON.stringify(DEMO_USER))
 
     // Small delay for UX
-    await new Promise(resolve => setTimeout(resolve, 500))
+    await new Promise(resolve => setTimeout(resolve, 300))
 
-    router.push(redirectTo)
-    router.refresh()
+    // Full page navigation to ensure fresh state
+    window.location.href = redirectTo
   }
 
   const onSubmit = async (data: LoginFormData) => {
