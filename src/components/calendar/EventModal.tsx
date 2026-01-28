@@ -7,6 +7,7 @@ import { z } from 'zod'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -92,6 +93,7 @@ export function EventModal({ open, onClose, event, selectedDate }: EventModalPro
   const isAllDay = watch('is_all_day')
   const selectedColor = watch('color')
 
+  // 폼 초기화
   useEffect(() => {
     if (open) {
       if (event) {
@@ -109,9 +111,6 @@ export function EventModal({ open, onClose, event, selectedDate }: EventModalPro
           is_all_day: event.is_all_day,
           color: event.color,
         })
-
-        // 기존 참석자 로드
-        setSelectedParticipants(existingParticipants.map((p) => p.user_id))
       } else if (selectedDate) {
         // 생성 모드
         const dateString = selectedDate.toISOString().split('T')[0]
@@ -128,7 +127,15 @@ export function EventModal({ open, onClose, event, selectedDate }: EventModalPro
         setSelectedParticipants([])
       }
     }
-  }, [open, event, selectedDate, reset, existingParticipants])
+  }, [open, event, selectedDate, reset])
+
+  // 참석자 초기화 (별도 useEffect로 분리하여 무한 루프 방지)
+  const participantIds = existingParticipants.map((p) => p.user_id).join(',')
+  useEffect(() => {
+    if (open && event && participantIds) {
+      setSelectedParticipants(participantIds.split(','))
+    }
+  }, [open, event?.id, participantIds])
 
   const toggleParticipant = (userId: string) => {
     setSelectedParticipants((prev) =>
@@ -224,6 +231,9 @@ export function EventModal({ open, onClose, event, selectedDate }: EventModalPro
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{event ? '일정 수정' : '새 일정'}</DialogTitle>
+          <DialogDescription>
+            {event ? '일정 정보를 수정합니다.' : '새로운 일정을 추가합니다.'}
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
