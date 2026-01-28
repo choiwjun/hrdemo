@@ -12,13 +12,22 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Loader2 } from 'lucide-react'
+import { Loader2, UserCircle } from 'lucide-react'
+
+// Demo user for testing without Supabase
+const DEMO_USER = {
+  id: 'user-001',
+  email: 'demo@teammate.com',
+  name: '김지민',
+  role: 'member',
+}
 
 function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirectTo') || '/mail'
   const [error, setError] = useState<string | null>(null)
+  const [isDemoLoading, setIsDemoLoading] = useState(false)
 
   const {
     register,
@@ -27,6 +36,20 @@ function LoginForm() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   })
+
+  const handleDemoLogin = async () => {
+    setIsDemoLoading(true)
+    setError(null)
+
+    // Store demo user in localStorage
+    localStorage.setItem('demo_user', JSON.stringify(DEMO_USER))
+
+    // Small delay for UX
+    await new Promise(resolve => setTimeout(resolve, 500))
+
+    router.push(redirectTo)
+    router.refresh()
+  }
 
   const onSubmit = async (data: LoginFormData) => {
     setError(null)
@@ -100,7 +123,7 @@ function LoginForm() {
         </CardContent>
 
         <CardFooter className="flex flex-col gap-4">
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button type="submit" className="w-full" disabled={isSubmitting || isDemoLoading}>
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -108,6 +131,35 @@ function LoginForm() {
               </>
             ) : (
               '로그인'
+            )}
+          </Button>
+
+          <div className="relative w-full">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">또는</span>
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={handleDemoLogin}
+            disabled={isSubmitting || isDemoLoading}
+          >
+            {isDemoLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                데모 로그인 중...
+              </>
+            ) : (
+              <>
+                <UserCircle className="mr-2 h-4 w-4" />
+                데모 계정으로 시작하기
+              </>
             )}
           </Button>
 

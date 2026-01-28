@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C /c/Users/wj941/Downloads/hrdemo log --oneline)",
+      "Bash(git -C /c/Users/wj941/Downloads/hrdemo fetch origin)",
+      "Bash(git rev-parse:*)",
+      "Bash(git -C /c/Users/wj941/Downloads/hrdemo log --all --oneline)",
+      "Bash(powershell -Command \"Copy-Item -Path ''teammate-temp\\\\*'' -Destination ''.'' -Recurse -Force; Remove-Item -Path ''teammate-temp'' -Recurse -Force\")",
+      "Bash(powershell -Command:*)",
+      "Bash(npx shadcn@latest add:*)"
+    ]
+  },
+  "allowShellCommands": true
+}

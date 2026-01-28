@@ -1,6 +1,8 @@
 'use client'
 
-import { Search, Bell, Menu } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Search, Bell, Menu, LogOut, User, KeyRound } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -13,12 +15,39 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useAuthStore } from '@/stores/authStore'
 
+interface DemoUser {
+  id: string
+  email: string
+  name: string
+  role: string
+}
+
 interface HeaderProps {
   onMenuClick?: () => void
 }
 
 export function Header({ onMenuClick }: HeaderProps) {
+  const router = useRouter()
   const { profile } = useAuthStore()
+  const [demoUser, setDemoUser] = useState<DemoUser | null>(null)
+
+  useEffect(() => {
+    const stored = localStorage.getItem('demo_user')
+    if (stored) {
+      setDemoUser(JSON.parse(stored))
+    }
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem('demo_user')
+    router.push('/login')
+    router.refresh()
+  }
+
+  // Use demo user if no Supabase profile
+  const userName = profile?.name || demoUser?.name || '사용자'
+  const userRole = profile?.role || demoUser?.role || 'member'
+  const avatarUrl = profile?.avatar_url || ''
 
   return (
     <header className="sticky top-0 z-50 flex h-14 items-center justify-between border-b bg-background px-4 lg:px-6">
@@ -61,9 +90,9 @@ export function Header({ onMenuClick }: HeaderProps) {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
               <Avatar className="h-8 w-8">
-                <AvatarImage src={profile?.avatar_url || ''} alt={profile?.name || '사용자'} />
+                <AvatarImage src={avatarUrl} alt={userName} />
                 <AvatarFallback>
-                  {profile?.name?.charAt(0) || 'U'}
+                  {userName.charAt(0)}
                 </AvatarFallback>
               </Avatar>
             </Button>
@@ -71,17 +100,26 @@ export function Header({ onMenuClick }: HeaderProps) {
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <div className="flex items-center justify-start gap-2 p-2">
               <div className="flex flex-col space-y-1 leading-none">
-                <p className="font-medium">{profile?.name || '사용자'}</p>
+                <p className="font-medium">{userName}</p>
                 <p className="text-xs text-muted-foreground">
-                  {profile?.role === 'admin' ? '관리자' : profile?.role === 'manager' ? '매니저' : '멤버'}
+                  {userRole === 'admin' ? '관리자' : userRole === 'manager' ? '매니저' : '멤버'}
                 </p>
               </div>
             </div>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>프로필 설정</DropdownMenuItem>
-            <DropdownMenuItem>비밀번호 변경</DropdownMenuItem>
+            <DropdownMenuItem>
+              <User className="mr-2 h-4 w-4" />
+              프로필 설정
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <KeyRound className="mr-2 h-4 w-4" />
+              비밀번호 변경
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive">로그아웃</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive" onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              로그아웃
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
