@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useLayoutEffect } from 'react'
 import { Header } from '@/components/layout/Header'
 import { Sidebar } from '@/components/layout/Sidebar'
 
-type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated'
+// SSR-safe useLayoutEffect
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 export default function DashboardLayout({
   children,
@@ -12,33 +13,31 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [authStatus, setAuthStatus] = useState<AuthStatus>('loading')
+  const [isClient, setIsClient] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-  useEffect(() => {
-    // 클라이언트에서 localStorage 체크
-    const demoUser = localStorage.getItem('demo_user')
-    if (demoUser) {
-      setAuthStatus('authenticated')
-    } else {
-      // 인증되지 않은 경우 로그인 페이지로 리다이렉트
-      window.location.href = '/login'
-    }
+  // 클라이언트 마운트 확인
+  useIsomorphicLayoutEffect(() => {
+    setIsClient(true)
   }, [])
 
-  // 로딩 중
-  if (authStatus === 'loading') {
+  // 인증 체크 - isClient가 true가 된 후에만 실행
+  useEffect(() => {
+    if (!isClient) return
+
+    const demoUser = localStorage.getItem('demo_user')
+    if (demoUser) {
+      setIsAuthenticated(true)
+    } else {
+      window.location.href = '/login'
+    }
+  }, [isClient])
+
+  // 클라이언트가 아니거나 인증되지 않은 경우 로딩 표시
+  if (!isClient || !isAuthenticated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-      </div>
-    )
-  }
-
-  // 인증되지 않은 경우 (리다이렉트 중)
-  if (authStatus === 'unauthenticated') {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <p className="text-muted-foreground">로그인 페이지로 이동 중...</p>
       </div>
     )
   }
