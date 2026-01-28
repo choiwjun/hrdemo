@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { Header } from '@/components/layout/Header'
 import { Sidebar } from '@/components/layout/Sidebar'
 
@@ -12,7 +11,6 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  const router = useRouter()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [authStatus, setAuthStatus] = useState<AuthStatus>('loading')
 
@@ -22,13 +20,10 @@ export default function DashboardLayout({
     if (demoUser) {
       setAuthStatus('authenticated')
     } else {
-      setAuthStatus('unauthenticated')
-      // 약간의 딜레이 후 리다이렉트 (상태 업데이트 보장)
-      setTimeout(() => {
-        router.replace('/login')
-      }, 100)
+      // 인증되지 않은 경우 로그인 페이지로 리다이렉트
+      window.location.href = '/login'
     }
-  }, [router])
+  }, [])
 
   // 로딩 중
   if (authStatus === 'loading') {
